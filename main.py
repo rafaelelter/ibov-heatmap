@@ -30,6 +30,9 @@ def make_return_matrix(time_series: pd.Series, freq: str) -> pd.DataFrame:
     return_matrix = return_matrix.iloc[:-1, 1:] # Remove primeira coluna e última linha
     return return_matrix
 
+def map_between_zero_and_one(value: float, min_value: float, max_value: float) -> float:
+    return (value - min_value) / (max_value - min_value)
+
 def main():
     freq = "Y"
 
@@ -42,18 +45,34 @@ def main():
     return_matrix = bvsp_return_matrix - ipca_return_matrix
 
     return_matrix = return_matrix * 100
+    min_return = return_matrix.min().min()
+    max_return = return_matrix.max().max()
+
+    return_matrix_zero_to_one = (return_matrix - min_return) / (max_return - min_return)
 
     fig = go.Figure(
         data=[
             go.Heatmap(
-                z=return_matrix.values,
-                y=return_matrix.index,
-                x=return_matrix.columns,
-                colorscale='Viridis',
+                z=return_matrix_zero_to_one.values,
+                y=return_matrix_zero_to_one.index,
+                x=return_matrix_zero_to_one.columns,
+                text=return_matrix.values,
                 hoverongaps=False,
-                hovertemplate='De %{y} até %{x}: <b>%{z:.2f}%<b><extra></extra>',
+                hovertemplate='De %{y} até %{x}: <b>%{text:.2f}%<b><extra></extra>',
                 showlegend=False,
-                showscale=False
+                showscale=False,
+                colorscale=[
+                    [0, "rgb(159, 83, 75)"],
+                    [map_between_zero_and_one(0, min_return, max_return), "rgb(159, 83, 75)"], 
+                    [map_between_zero_and_one(0, min_return, max_return), "rgb(198, 158, 144)"], 
+                    [map_between_zero_and_one(3, min_return, max_return), "rgb(198, 158, 144)"], 
+                    [map_between_zero_and_one(3, min_return, max_return), "rgb(204, 204, 181)"], 
+                    [map_between_zero_and_one(7, min_return, max_return), "rgb(204, 204, 181)"], 
+                    [map_between_zero_and_one(7, min_return, max_return), "rgb(155, 166, 118)"], 
+                    [map_between_zero_and_one(10, min_return, max_return), "rgb(155, 166, 118)"], 
+                    [map_between_zero_and_one(10, min_return, max_return), "rgb(122, 135, 75)"], 
+                    [1, "rgb(122, 135, 75)"]
+                ],
             )
         ]
     )
