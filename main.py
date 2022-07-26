@@ -1,3 +1,4 @@
+from dateutil import relativedelta
 import numpy as np
 import pandas as pd
 
@@ -53,23 +54,28 @@ def main():
     fig.update_yaxes(autorange="reversed", fixedrange=True, showticklabels=False)
     fig.update_layout(title='Return Matrix', plot_bgcolor='#FFFFFF')
     
-    #TODO: inserir anotações na coluna a esquerda
     fig.update_layout(
         annotations=[
             dict(
                 x=xi,
                 y=yi,
-                text=yi.strftime('%Y') + "   ",
+                text=yi.strftime('%Y'),
                 showarrow=False,
-                # xshift=-20,
-                align="left",
                 borderwidth=2,
                 xanchor="right",
             ) 
-        for xi, yi in zip(return_matrix.columns, return_matrix.index) if ((yi.year % 5 == 0) or yi in (return_matrix.index[0], return_matrix.index[-1]))]
+        for xi, yi in zip(return_matrix.columns[:-1], return_matrix.index[1:]) if ((yi.year % 5 == 0) or yi in (return_matrix.index[0], return_matrix.index[-1]))] \
+        + [
+            dict(
+                x=return_matrix.index[0],
+                y=return_matrix.index[0],
+                text=return_matrix.index[0].strftime('%Y'),
+                showarrow=False,
+                borderwidth=2,
+                xanchor="right",
+            )
+        ]
     )
-    
-    print(fig.layout.height, fig.layout.width)
 
     app = Dash(__name__)
     app.layout = html.Div(
