@@ -79,7 +79,7 @@ def main():
     fig.update_xaxes(
         fixedrange=True, side="top", tickmode='array', 
         tickvals=[return_matrix.columns[0], return_matrix.columns[-1]] + return_matrix.columns[return_matrix.columns.year % 5 == 0].to_list(),
-        tickformat='%Y')
+        tickformat='%Y', tickangle=-60)
     fig.update_yaxes(autorange="reversed", fixedrange=True, showticklabels=False)
     fig.update_layout(title='Return Matrix', plot_bgcolor='#FFFFFF')
     
