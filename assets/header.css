@@ -3,13 +3,13 @@
   }
   
 .center-me {
-    width: 90vh;
-    height: 90vh;
-    padding: 2vh;
+    width: min(90vh, 90vw);
+    height: min(90vh, 90vw);
+    padding: min(2vh, 2vw);
     
     position: absolute;
     top: 50%;
     left: 50%;
     
-    margin: -0vh 0 0 -46vh;
+    margin: -0vh 0 0 max(-46vh,-46vw);
   }
