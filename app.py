@@ -115,7 +115,8 @@ app.layout = html.Div(
         dcc.Graph(
             id='example-graph',
             figure=fig,
-            className="center-me"
+            className="center-me",
+            config= {'displaylogo': False}
         )
 ])
 
