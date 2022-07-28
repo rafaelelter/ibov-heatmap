@@ -10,10 +10,10 @@ def annualized_return(start_date: np.datetime64, start_val: np.float64, end_date
     if start_date == end_date:
         return 0
     
-    start_year = start_date.astype('datetime64[Y]').astype(int) + 1970
-    end_year = end_date.astype('datetime64[Y]').astype(int) + 1970
+    start_date_val = start_date.astype("datetime64[D]").astype(int)
+    end_date_val = end_date.astype("datetime64[D]").astype(int)
 
-    return (end_val / start_val) ** (1 / (end_year - start_year)) - 1
+    return (end_val / start_val) ** (365 / (end_date_val - start_date_val)) - 1
 
 def make_return_matrix(time_series: pd.Series, freq: str) -> pd.DataFrame:
     frequency_data = time_series.groupby(pd.Grouper(freq=freq)).last()
