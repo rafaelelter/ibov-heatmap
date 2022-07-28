@@ -75,35 +75,49 @@ fig = go.Figure(
         )
     ]
 )
+
+# TODO: simplificar isso aqui
+x_tickvals = [return_matrix.columns[0], return_matrix.columns[-1]] + return_matrix.columns[return_matrix.columns.year % 5 == 0].to_list()
+years = []
+unique_x_tickvals = []
+for dt in x_tickvals:
+    if not dt.year in years:
+        years.append(dt.year)
+        unique_x_tickvals.append(dt)
+
 fig.update_xaxes(
     fixedrange=True, side="top", tickmode='array', 
-    tickvals=[return_matrix.columns[0], return_matrix.columns[-1]] + return_matrix.columns[return_matrix.columns.year % 5 == 0].to_list(),
+    tickvals=unique_x_tickvals,
     tickformat='%Y', tickangle=-60)
 fig.update_yaxes(autorange="reversed", fixedrange=True, showticklabels=False)
 fig.update_layout(title='Return Matrix', plot_bgcolor='#FFFFFF')
 
-fig.update_layout(
-    annotations=[
-        dict(
-            x=xi,
-            y=yi,
-            text=yi.strftime('%Y'),
-            showarrow=False,
-            borderwidth=2,
-            xanchor="right",
-        ) 
-    for xi, yi in zip(return_matrix.columns[:-1], return_matrix.index[1:]) if ((yi.year % 5 == 0) or yi in (return_matrix.index[0], return_matrix.index[-1]))] \
-    + [
-        dict(
-            x=return_matrix.index[0],
-            y=return_matrix.index[0],
-            text=return_matrix.index[0].strftime('%Y'),
-            showarrow=False,
-            borderwidth=2,
-            xanchor="right",
-        )
-    ]
+annotations = []
+annotations.append(
+    dict(
+        x=return_matrix.index[0],
+        y=return_matrix.index[0],
+        text=return_matrix.index[0].strftime('%Y'),
+        showarrow=False,
+        borderwidth=2,
+        xanchor="right",
+    )
 )
+for xi, yi in zip(return_matrix.columns[:-1], return_matrix.index[1:]):
+    years = [d["y"].year for d in annotations]
+    if ((yi.year % 5 == 0) or yi in (return_matrix.index[0], return_matrix.index[-1])) and yi.year not in years:
+        annotations.append(
+            dict(
+                x=xi,
+                y=yi,
+                text=yi.strftime('%Y'),
+                showarrow=False,
+                borderwidth=2,
+                xanchor="right",
+            ) 
+        )
+
+fig.update_layout(annotations=annotations)
 
 app = Dash(__name__)
 
